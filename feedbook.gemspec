@@ -24,6 +24,8 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'koala',    '~> 1.9'
   spec.add_runtime_dependency 'box',      '~> 0.1'
   spec.add_runtime_dependency 'twitter',  '~> 5.1'
+  spec.add_runtime_dependency 'mail',     '~> 2.6'
+  spec.add_runtime_dependency 'irc-notify'
 
   spec.add_development_dependency 'bundler', '~> 1.6'
   spec.add_development_dependency 'rake',    '~> 10.3'

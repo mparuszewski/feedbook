@@ -12,6 +12,7 @@ module Feedbook
       @interval    = read_interval(opts.fetch(:interval, ''))
       @twitter     = opts.fetch(:twitter,  {})
       @facebook    = opts.fetch(:facebook, {})
+      @irc         = opts.fetch(:irc, {})
     end
 
     def load_notifiers
@@ -22,10 +23,14 @@ module Feedbook
       unless facebook.nil?
         Notifiers::FacebookNotifier.instance.load_configuration(facebook)
       end
+
+      unless irc.nil?
+        Notifiers::IRCNotifier.instance.load_configuration(irc)
+      end
     end
 
     private
-    attr_reader :twitter, :facebook
+    attr_reader :twitter, :facebook, :irc
 
     def read_interval(value)
       if value.strip =~ INTERVAL_FORMAT

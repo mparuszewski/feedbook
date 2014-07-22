@@ -13,6 +13,8 @@ module Feedbook
           Notifiers::TwitterNotifier.instance
         when :facebook, 'facebook'
           Notifiers::FacebookNotifier.instance
+        when :irc, 'irc'
+          Notifiers::IRCNotifier.instance
         else
           raise Errors::UnsupportedNotifierError.new 
         end
