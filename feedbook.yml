@@ -1,0 +1,21 @@
+## Feedbook default config file, modify it!
+
+feeds:
+  - url: http://pinoit.blogspot.in/feeds/posts/default
+    variables:
+      default_header: Check out our new post
+    notifications:
+      - type: facebook
+        template: "{{ default_header }} {{ title }} by {{ author }}: {{ url }}"
+      - type: twitter
+        template: "{{ default_header }} on our blog {{ feed_url }}: {{ title }} / {{ url }}"
+
+configuration:
+  interval: 5s
+  facebook:
+    token: SECRET_FACEBOOK_TOKEN
+  twitter:
+    consumer_key: SECRET_CONSUMER_KEY
+    consumer_secret: SECRET_TWITTER_CONSUMER_SECRET
+    access_token: SECRET_TWITTER_ACCESS_TOKEN
+    access_token_secret: SECRET_TWITTER_ACCESS_TOKEN_SECRET
