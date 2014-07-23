@@ -8,9 +8,15 @@ module Feedbook
   class Listener
 
     def self.start(path)
+      print "Loading configuration from file #{path}... "
       feeds, configuration = load_configuration(path)
-      configuration.load_notifiers
+      puts 'completed.'
 
+      print 'Loading notifiers... '
+      configuration.load_notifiers
+      puts 'completed.'
+
+      print 'Fetching feeds for the first use... '
       observed_feeds = feeds.map do |feed|
         {
           feed: feed,
@@ -18,16 +24,32 @@ module Feedbook
           new_posts: [] 
         }
       end
+      puts 'completed.'
 
+      puts 'Listener started...'
       every configuration.interval do
+        
+        puts 'Fetching feeds...'
         observed_feeds.each do |feed|
           new_posts = feed[:feed].fetch
 
           difference = Comparers::PostsComparer.get_new_posts(feed[:old_posts], new_posts)
+          
+          if difference.empty?
+            puts 'No new posts found.'
+          else
+            puts "#{difference.size} new posts found."
+            print 'Started sending notifications... '
+          end
+
           difference.each do |post|
             feed[:feed].notifications.each do |notification|
               notification.notify(post)
             end
+          end
+
+          unless difference.empty?
+            puts 'completed.'
           end
 
           feed[:old_posts] = new_posts
