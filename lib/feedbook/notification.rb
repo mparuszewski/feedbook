@@ -19,7 +19,7 @@ module Feedbook
       
       notifier.notify(message)
     rescue SyntaxError => e
-      raise Error::TemplateSyntaxError.new(e.message)
+      raise Errors::TemplateSyntaxError.new(e.message)
     end
 
     private

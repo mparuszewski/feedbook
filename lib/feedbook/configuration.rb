@@ -1,6 +1,5 @@
-require 'timeloop/core_ext'
 require 'feedbook/notifiers'
-require 'feedbook/errors/invalid_interval_format_error'
+require 'feedbook/helpers/time_interval_parser'
 
 module Feedbook
   class Configuration
@@ -9,10 +8,10 @@ module Feedbook
     INTERVAL_FORMAT = /\A(\d+)(s|m|h|d)\z/
 
     def initialize(opts = {})
-      @interval    = read_interval(opts.fetch(:interval, ''))
-      @twitter     = opts.fetch(:twitter,  {})
-      @facebook    = opts.fetch(:facebook, {})
-      @irc         = opts.fetch(:irc, {})
+      @interval    = Helpers::TimeIntervalParser.parse(opts.fetch(:interval, ''))
+      @twitter     = opts.fetch(:twitter,  nil)
+      @facebook    = opts.fetch(:facebook, nil)
+      @irc         = opts.fetch(:irc, nil)
     end
 
     def load_notifiers
@@ -31,24 +30,6 @@ module Feedbook
 
     private
     attr_reader :twitter, :facebook, :irc
-
-    def read_interval(value)
-      if value.strip =~ INTERVAL_FORMAT
-        number, type = INTERVAL_FORMAT.match(value).captures
-        case type
-        when 's'
-          Integer(number).seconds
-        when 'm'
-          Integer(number).minutes
-        when 'h'
-          Integer(number).hours
-        when 'd'
-          Integer(number).days
-        end
-      else
-        raise Errors::InvalidIntervalFormatError.new
-      end
-    end
 
   end
 end

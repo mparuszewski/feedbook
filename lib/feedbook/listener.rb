@@ -19,8 +19,7 @@ module Feedbook
         }
       end
 
-      loop do
-        sleep configuration.interval
+      every configuration.interval do
         observed_feeds.each do |feed|
           new_posts = feed[:feed].fetch
 
