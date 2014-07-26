@@ -1,4 +1,5 @@
 require 'liquid'
+require 'feedbook/liquid_extensions'
 require 'feedbook/factories/notifiers_factory'
 require 'feedbook/errors/template_syntax_error'
 require 'feedbook/errors/invalid_variables_format_error'

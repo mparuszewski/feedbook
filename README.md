@@ -113,8 +113,6 @@ Because Feedbook is still in development there is many to do:
 
 * add Google+ Notifier
   * Unfortunately Google+ does not provides API with ability to push messages to streams. Because of that I need to find a tool that will provide that feature without use of Google+.
-* add links shortener (bit.ly or goo.gl) as a Liquid tag/filter
-  * Twitter limits Tweet length to 140 characters, why not to shorten links and rescue too long message.
 * add ability to add own Notifier without forking Feedbook project
   * I would like to give ability to users to create own Notifier plugins without any special development to Feedbook.
 * add more tests
