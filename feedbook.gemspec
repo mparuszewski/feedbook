@@ -4,18 +4,18 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'feedbook/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "feedbook"
+  spec.name          = 'feedbook'
   spec.version       = Feedbook::VERSION
-  spec.authors       = ["Maciej Paruszewski"]
-  spec.email         = ["maciek.paruszewski@gmail.com"]
+  spec.authors       = ['Maciej Paruszewski']
+  spec.email         = ['maciek.paruszewski@gmail.com']
   spec.summary       = %q{Feedbook}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/pinoss/feedbook"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
-  spec.require_paths = ["lib"]
+  spec.require_paths = ['lib']
 
   spec.add_runtime_dependency 'feedjira', '~> 1.3'
   spec.add_runtime_dependency 'gli',      '~> 2.1'

@@ -21,9 +21,14 @@ describe Feedbook::Notifiers::TwitterNotifier do
   end
 
   describe '#notify' do
+    let(:client) { double }
+
     it 'create and send notification message to notifier' do
-      expect(subject).to receive_message_chain(:client, update: 'message')
+      allow(subject).to receive(:nil?).and_return(true)
+      expect(client).to receive(:update).with('message')
       
+      allow(subject).to receive(:client).and_return(client)
+
       subject.notify('message')
     end
   end

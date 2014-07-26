@@ -6,6 +6,12 @@ module Feedbook
     class TimeIntervalParser
 
       INTERVAL_FORMAT = /\A(\d+)(s|m|h|d)\z/
+
+      # Parses given string with interval and converts into a amount of seconds.
+      # @param value [String] String with interval (e.g. '10m', '100s', '20h', '10d')
+      # 
+      # @return [Integer] amount of seconds that equals given interval value 
+      # @raise [Feedbook::Errors::InvalidIntervalFormatError] if given string is not a valid format
       def self.parse(value)
         if value.strip =~ INTERVAL_FORMAT
           number, type = INTERVAL_FORMAT.match(value).captures

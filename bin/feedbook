@@ -37,9 +37,13 @@ command :version do |c|
 end
 
 on_error do |exception|
-  STDERR.puts "Error: #{exception} (#{exception.class})"
-  STDERR.puts exception.backtrace.join("\n")
-  true
+  case exception
+  when SystemExit
+  else
+    STDERR.puts "Error: #{exception} (#{exception.class})"
+    STDERR.puts exception.backtrace.join("\n")
+  end
+  false
 end
 
 exit run(ARGV)

@@ -3,6 +3,10 @@ module Feedbook
 
     attr_reader :author, :published, :url, :title, :feed_title 
 
+    # Initializes new Post from opts Hash
+    # @param opts = {} [Hash] Hash with params required for Post creation
+    # 
+    # @return [NilClass] nil
     def initialize(opts = {})
       @author     = opts.fetch(:author)
       @published  = opts.fetch(:published)
@@ -11,6 +15,9 @@ module Feedbook
       @feed_title = opts.fetch(:feed_title)
     end
 
+    # Returns hash with values from posts.
+    # 
+    # @return [Hash] Hash with post variables
     def to_hash
       {
         'author'     => author,

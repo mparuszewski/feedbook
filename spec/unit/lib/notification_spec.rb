@@ -16,13 +16,11 @@ describe Feedbook::Notification do
 
     it 'parses hash and creates Notification instance' do
       expect(subject.type).to      eq('twitter')
-      expect(subject.template).to  eq('Post {{ test_variable }} on {{ url }}')
       expect(subject.variables).to eq({ 'test_variable' => 'test_value' })
     end
   
     it 'should set default values' do
       expect(Feedbook::Notification.new({}).type).to      eq('')
-      expect(Feedbook::Notification.new({}).template).to  eq('')
       expect(Feedbook::Notification.new({}).variables).to eq({})
     end
   end

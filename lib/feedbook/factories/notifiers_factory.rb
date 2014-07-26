@@ -5,6 +5,10 @@ module Feedbook
   module Factories
     class NotifiersFactory
 
+      # Returns instance of Notifier for given type.
+      # @param type [Symbol/String] name of requested notifier
+      # 
+      # @return [Notifier] Notifier instance
       def self.create(type)
         case type
         when :null, 'null'
@@ -16,7 +20,7 @@ module Feedbook
         when :irc, 'irc'
           Notifiers::IRCNotifier.instance
         else
-          raise Errors::UnsupportedNotifierError.new 
+          raise Errors::UnsupportedNotifierError.new(type)
         end
       end
     end
