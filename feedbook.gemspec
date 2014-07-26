@@ -8,9 +8,10 @@ Gem::Specification.new do |spec|
   spec.version       = Feedbook::VERSION
   spec.authors       = ['Maciej Paruszewski']
   spec.email         = ['maciek.paruszewski@gmail.com']
-  spec.summary       = %q{Feedbook}
-  spec.homepage      = "https://github.com/pinoss/feedbook"
-  spec.license       = "MIT"
+  spec.summary       = %q{Feedbook is a simple console application that is build for social media notifications about RSS/Atom updates.}
+  spec.description   = %q{Feedbook is a simple console application that allows to notify on IRC, mail and social media (like Twitter and Facebook) about RSS/Atom updates.}
+  spec.homepage      = 'https://github.com/pinoss/feedbook'
+  spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
