@@ -17,7 +17,7 @@ module Feedbook
         feeds.each { |feed| feed.valid? }
         puts 'completed.'
 
-        print 'Loading notifiers... '
+        puts 'Loading notifiers... '
         configuration.load_notifiers
         puts 'completed.'
 
