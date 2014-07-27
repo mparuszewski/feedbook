@@ -1,9 +1,9 @@
-require 'feedbook/notifiers'
+require 'feedbook/factories/notifiers_factory'
 require 'feedbook/helpers/time_interval_parser'
 
 module Feedbook
   class Configuration
-    attr_reader :interval
+    attr_reader :interval, :options
 
     INTERVAL_FORMAT = /\A(\d+)(s|m|h|d)\z/
 
@@ -12,36 +12,18 @@ module Feedbook
     # 
     # @return [NilClass] nil
     def initialize(opts = {})
-      @interval    = Helpers::TimeIntervalParser.parse(opts.fetch(:interval, ''))
-      @twitter     = opts.fetch(:twitter,  nil)
-      @facebook    = opts.fetch(:facebook, nil)
-      @irc         = opts.fetch(:irc, nil)
-      @mail        = opts.fetch(:mail, nil)
+      @interval    = Helpers::TimeIntervalParser.parse opts.delete('interval')
+      @options     = opts
     end
 
     # Load notifiers configuration
     # 
     # @return [NilClass] nil
     def load_notifiers
-      unless twitter.nil?
-        Notifiers::TwitterNotifier.instance.load_configuration(twitter)
-      end
-      
-      unless facebook.nil?
-        Notifiers::FacebookNotifier.instance.load_configuration(facebook)
-      end
-
-      unless irc.nil?
-        Notifiers::IRCNotifier.instance.load_configuration(irc)
-      end
-
-      unless mail.nil?
-        Notifiers::MailNotifier.instance.load_configuration(mail)
+      options.each do |name, config|
+        notifier = Factories::NotifiersFactory.create(name)
+        notifier.load_configuration(config) unless notifier.nil?
       end
     end
-
-    private
-    attr_reader :twitter, :facebook, :irc, :mail
-
   end
 end

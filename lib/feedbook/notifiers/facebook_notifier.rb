@@ -25,12 +25,12 @@ module Feedbook
       end
 
       # Load configuration for FacebookNotifier
-      # @param configuration = {} [Hash] Configuration hash (required: token)
+      # @param configuration = {} [Hash] Configuration hash (required: token, optional: app_secret)
       # 
       # @return [NilClass] nil
       # @raise [Feedbook::Errors::NotifierConfigurationError] if notifier configuration fails 
       def load_configuration(configuration = {})
-        @client = Koala::Facebook::API.new(configuration.fetch('token'))
+        @client = Koala::Facebook::API.new(configuration.fetch('token'), configuration.fetch('app_secret', nil))
         
         puts 'Configuration loaded for FacebookNotifier'
       rescue Koala::KoalaError => e

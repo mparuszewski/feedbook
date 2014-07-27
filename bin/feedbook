@@ -15,8 +15,10 @@ flag [:c,:config], default_value: 'feedbook.yml', desc: 'Feedbook configuration 
 desc 'Parses feedbook.yml file for feeds and configuration and listen for changes in RSS/Atom feeds to notify about updates on social media sites'
 command :start do |c|
 
-  c.action do |global_options, _, _|
-    Feedbook::Listener.start(global_options[:config])
+  c.flag [:p, :plugins], default_value: './plugins', desc: 'Plugins directory'
+
+  c.action do |global_options, options, _|
+    Feedbook::Listener.start(global_options[:config], options[:plugins])
   end
 end
 
@@ -31,7 +33,7 @@ end
 
 desc 'Outputs feedbook gem version'
 command :version do |c|
-  c.action do |global_options, _, _|
+  c.action do |_, _, _|
     puts "feedbook version: #{Feedbook::VERSION}"
   end
 end

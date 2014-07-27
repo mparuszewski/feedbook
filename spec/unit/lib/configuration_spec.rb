@@ -4,16 +4,16 @@ describe Feedbook::Configuration do
   
   let(:hash) do
     {
-      twitter:  {},
-      facebook: {},
-      irc:      {},
-      interval: '5m'
+      'twitter'  => {},
+      'facebook' => {},
+      'irc'      => {},
+      'interval' => '5m'
     }
   end
 
   before :each do
     allow(Feedbook::Helpers::TimeIntervalParser).to receive(:parse).with('5m').and_return(300)
-    allow(Feedbook::Helpers::TimeIntervalParser).to receive(:parse).with('').and_raise(Feedbook::Errors::InvalidIntervalFormatError.new)
+    allow(Feedbook::Helpers::TimeIntervalParser).to receive(:parse).with(nil).and_raise(Feedbook::Errors::InvalidIntervalFormatError.new)
   end
 
   subject { Feedbook::Configuration.new(hash) } 

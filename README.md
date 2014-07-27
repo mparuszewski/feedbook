@@ -113,13 +113,10 @@ Because Feedbook is still in development there is many to do:
 
 * add Google+ Notifier
   * Unfortunately Google+ does not provides API with ability to push messages to streams. Because of that I need to find a tool that will provide that feature without use of Google+.
-* add ability to add own Notifier without forking Feedbook project
-  * I would like to give ability to users to create own Notifier plugins without any special development to Feedbook.
 * add more tests
   * I would like to add integration tests to make sure that all features work.
 * add offline mode
   * I would like to add ability to run Feedbook with cron (start Feedbook, look for changes, save list of already notified posts and turn off)
-* add ability to Facebook notifier to run with own app (without Graph API Explorer key)
 
 ## Contributing
 

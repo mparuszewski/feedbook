@@ -19,8 +19,16 @@ module Feedbook
           Notifiers::FacebookNotifier.instance
         when :irc, 'irc'
           Notifiers::IRCNotifier.instance
+        when :mail, 'mail'
+          Notifiers::MailNotifier.instance
         else
-          raise Errors::UnsupportedNotifierError.new(type)
+          if Notifiers.const_defined?("#{type.capitalize}Notifier")
+            Notifiers.const_get("#{type.capitalize}Notifier").instance
+          elsif Notifiers.const_defined?("#{type.upcase}Notifier")
+            Notifiers.const_get("#{type.upcase}Notifier").instance
+          else
+            puts "notifier #{type} is not supported by Feedbook."
+          end
         end
       end
     end

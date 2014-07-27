@@ -8,12 +8,24 @@ describe Feedbook::Notifiers::FacebookNotifier do
     }
   end
 
+  let(:hash_with_app_token) do
+    {
+      'token' => 'token123',
+      'app_secret' => 'app_token_123'
+    }
+  end
+
   subject { Feedbook::Notifiers::FacebookNotifier.instance }
   
   describe '#load_configuration' do
     it 'parses configuration hash and creates client instance' do
-      expect(Koala::Facebook::API).to receive(:new).with('token123')
+      expect(Koala::Facebook::API).to receive(:new).with('token123', nil)
       subject.load_configuration(hash)
+    end
+
+    it 'parses configuration hash and creates client instance with app secret' do
+      expect(Koala::Facebook::API).to receive(:new).with('token123', 'app_token_123')
+      subject.load_configuration(hash_with_app_token)
     end
   end
 

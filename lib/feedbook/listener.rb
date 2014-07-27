@@ -1,6 +1,7 @@
 require 'yaml'
 require 'timeloop'
 require 'feedbook/feed'
+require 'feedbook/plugins_manager'
 require 'feedbook/errors'
 require 'feedbook/configuration'
 require 'feedbook/comparers/posts_comparer'
@@ -10,23 +11,16 @@ module Feedbook
 
     # Starts listening on feeds and notifies if there is new post.
     # @param path [String] configuration file path
-    def self.start(path)
+    # @param plugins_path [String] plugins directory path
+    def self.start(path, plugins_path)
       handle_exceptions do
-        print "Loading configuration from file #{path}... "
-        feeds, configuration = load_configuration(path)
-        feeds.each { |feed| feed.valid? }
-        puts 'completed.'
-
-        puts 'Loading notifiers... '
-        configuration.load_notifiers
-        puts 'completed.'
+        feeds, configuration = initialize_listener(path, plugins_path)
 
         print 'Fetching feeds for the first use... '
         observed_feeds = feeds.map do |feed|
           {
             feed: feed,
-            old_posts: feed.fetch,
-            new_posts: [] 
+            posts: feed.fetch
           }
         end
         puts 'completed.'
@@ -36,32 +30,43 @@ module Feedbook
           
           puts 'Fetching feeds...'
           observed_feeds.each do |feed|
-            new_posts = feed[:feed].fetch
-
-            difference = Comparers::PostsComparer.get_new_posts(feed[:old_posts], new_posts)
-            
-            if difference.empty?
-              puts 'No new posts found.'
-            else
-              puts "#{difference.size} new posts found."
-              print 'Started sending notifications... '
-            end
-
-            difference.each do |post|
-              feed[:feed].notifications.each do |notification|
-                notification.notify(post)
-              end
-            end
-
-            unless difference.empty?
-              puts 'completed.'
-            end
-
-            feed[:old_posts] = new_posts
-            feed[:new_posts] = []
+            observe_and_notify(feed)
           end
         end
       end
+    end
+
+
+    # 
+    # Single run of loop for listening for changes in RSS feeds and notifies about updates
+    # @param feed [Feedbook::Feed] requested feed to be observed (hash with feed and posts)
+    # 
+    # @return [NilClass] nil
+    def self.observe_and_notify(feed)
+      new_posts = feed[:feed].fetch
+
+      difference = Comparers::PostsComparer.get_new_posts(feed[:posts], new_posts)
+      
+      if difference.empty?
+        puts 'No new posts found.'
+      else
+        puts "#{difference.size} new posts found."
+        print 'Started sending notifications... '
+      end
+
+      difference.each do |post|
+        feed[:feed].notifications.each do |notification|
+          notification.notify(post)
+        end
+      end
+
+      unless difference.empty?
+        puts 'completed.'
+      end
+
+      feed[:posts] = new_posts
+
+      feed
     end
 
     private
@@ -72,7 +77,7 @@ module Feedbook
     rescue Errors::InvalidFeedUrlError
       abort 'feed url collection is not valid (contains empty or invalid urls)'
     rescue Errors::InvalidIntervalFormatError
-      abort 'interval value in configuration is not valud (should be in format: "(Number)(TimeType)" where TimeType is s, m, h or d)'
+      abort 'interval value in configuration is not valid (should be in format: "(Number)(TimeType)" where TimeType is s, m, h or d)'
     rescue Errors::InvalidVariablesFormatError
       abort 'invalid variables format in configuration (should be a key-value pairs)'
     rescue Errors::NoConfigurationFileError => e
@@ -83,10 +88,30 @@ module Feedbook
       p     "notifier #{e.notifier} did not notify because of client error (#{e.message})."
     rescue Errors::ParseFeedError => e
       p     "feed on #{e.url} could not be parsed because of fetching/parsing error."
-    rescue Errors::UnsupportedNotifierError => e
-      abort "notifier #{e.notifier} is not supported by Feedbook."
     rescue Errors::TemplateSyntaxError
       abort "one of your templates in configuration file is not valid."
+    end
+
+    # Initializes listener configuration, loads plugins and notifiers.
+    # @param path [String] config file path
+    # @param plugins_path [String] plugins directory path
+    # 
+    # @return [[Array, Feedbook::Configuration]] feeds and Configuration instance 
+    def self.initialize_listener(path, plugins_path)
+      print "Loading configuration from file #{path}... "
+      feeds, configuration = load_configuration(path)
+      feeds.each { |feed| feed.valid? }
+      puts 'completed.'
+
+      puts 'Loading notifiers... '
+      print "Loading plugins from #{plugins_path}... "
+      Feedbook::PluginsManager.load_plugins(plugins_path)
+      puts 'completed.'
+
+      configuration.load_notifiers
+      puts 'completed.'
+
+      [feeds, configuration]
     end
 
     # Load configuration from given path
@@ -107,11 +132,7 @@ module Feedbook
       
       configuration_hash = config.fetch('configuration', {})
 
-      configuration = Configuration.new(
-        twitter:     configuration_hash['twitter'],
-        facebook:    configuration_hash['facebook'],
-        interval:    configuration_hash['interval'],
-      )
+      configuration = Configuration.new(configuration_hash)
 
       [feeds, configuration]
     rescue Errno::ENOENT => e

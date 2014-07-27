@@ -4,7 +4,12 @@ require 'liquid'
 module Feedbook
   module LiquidExtensions
     module Filters
-      class GooglShortenerFilter
+      module GooglShortenerFilter
+
+        # Shorten links with goo.gl
+        # @param input [String] url
+        # 
+        # @return [String] url in shorten form
         def googl(input)
           url = Googl.shorten(input)
           url.short_url
