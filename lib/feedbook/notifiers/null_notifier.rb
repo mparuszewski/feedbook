@@ -17,7 +17,7 @@ module Feedbook
       # @param configuration = {} [Hash] Configuration hash
       # 
       # @return [NilClass] nil
-      def load_configuration(configuration = {})
+      def load_configuration(_)
         puts 'Configuration loaded for NullNotifier'
       end
     end

@@ -143,8 +143,6 @@ module Feedbook
       abort "configuration file could not be loaded: #{e.message}"
     rescue Errors::NotifierConfigurationError => e
       abort "notifier #{e.notifier} has invalid configuration (#{e.message})."
-    rescue Errors::NotifierNotifyError => e
-      p     "notifier #{e.notifier} did not notify because of client error (#{e.message})."
     rescue Errors::ParseFeedError => e
       p     "feed on #{e.url} could not be parsed because of fetching/parsing error."
     rescue Errors::TemplateSyntaxError
