@@ -19,7 +19,7 @@ module Feedbook
         print 'Fetching feeds for the first use... '
         observed_feeds = feeds.map do |feed|
           {
-            feed: feed,
+            feed:  feed,
             posts: feed.fetch
           }
         end
@@ -36,8 +36,67 @@ module Feedbook
       end
     end
 
+    # Starts listening on feeds and notifies if there is new post (offline mode).
+    # @param path [String] configuration file path
+    # @param plugins_path [String] plugins directory path
+    def self.start_offline(path, archive_path, plugins_path)
+      handle_exceptions do
+        feeds, configuration = initialize_listener(path, plugins_path)
 
+        observed_feeds = load_feeds_archive(archive_path)
+
+        if observed_feeds.blank?
+          print 'Fetching feeds for the first use... '
+          observed_feeds = feeds.map do |feed|
+            {
+              feed: feed,
+              posts: feed.fetch
+            }
+          end
+          puts 'completed.'
+        end
+
+        puts 'Fetching feeds...'
+        observed_feeds.each do |feed|
+          observe_and_notify(feed)
+        end
+
+        save_feeds_archive(archive_path, observed_feeds)
+      end
+    end
+
+    # Load feeds from serialized YAML file.
+    # @param [String] path to YAML file with serialized objects
+    #
+    # @return [Array] Array of feeds with archived posts
+    def self.load_feeds_archive(path)
+      print 'Reading feeds from file... '
+
+      if File.exist? path
+        puts 'completed.'
+        YAML::load(File.read(path))
+      else
+        puts 'canceled. File does not exist.'
+        []
+      end
+    end
+
+    # Saves feeds into serialized YAML file
+    # @param path [String] path to file
+    # @param feeds [Array] Array with feeds to be saved
     # 
+    # @return [NilClass] nil
+    def self.save_feeds_archive(path, feeds)
+      print 'Saving feeds to file... '
+
+      File.open(path, 'w') do |f|
+        f.write YAML::dump(feeds)
+      end
+
+      puts 'completed.'
+    end
+
+
     # Single run of loop for listening for changes in RSS feeds and notifies about updates
     # @param feed [Feedbook::Feed] requested feed to be observed (hash with feed and posts)
     # 
@@ -103,11 +162,9 @@ module Feedbook
       feeds.each { |feed| feed.valid? }
       puts 'completed.'
 
-      puts 'Loading notifiers... '
-      print "Loading plugins from #{plugins_path}... "
       Feedbook::PluginsManager.load_plugins(plugins_path)
-      puts 'completed.'
 
+      puts 'Loading notifiers... '
       configuration.load_notifiers
       puts 'completed.'
 

@@ -6,10 +6,12 @@ module Feedbook
     # 
     # @return [NilClass] nil
     def self.load_plugins(path)
+      print "Loading plugins from #{path}... "
       if File.directory? path
         Dir[File.join(path, '**', '*.rb')].sort.each do |f|
           require f
         end
+        puts 'completed.'
       else
         print "Plugins directory could not be found in #{path}."
       end

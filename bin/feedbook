@@ -10,24 +10,36 @@ include GLI::App
 
 program_desc 'Feedbook is a simple gem and application that notifies about new posts and Atom/RSS updates on your social media sites (like Facebook and Twitter), e-mail or IRC.'
 
-flag [:c,:config], default_value: 'feedbook.yml', desc: 'Feedbook configuration file location'
-
 desc 'Parses feedbook.yml file for feeds and configuration and listen for changes in RSS/Atom feeds to notify about updates on social media sites'
 command :start do |c|
 
-  c.flag [:p, :plugins], default_value: './plugins', desc: 'Plugins directory'
+  c.flag [:c, :config],  default_value: 'feedbook.yml',           desc: 'Feedbook configuration file location'
+  c.flag [:p, :plugins], default_value: './plugins',              desc: 'Plugins directory'
+  c.flag [:a, :archive], default_value: 'feedbook_offline.yml',  desc: 'Feedbook archive file'
 
-  c.action do |global_options, options, _|
-    Feedbook::Listener.start(global_options[:config], options[:plugins])
+  c.default_desc 'Parses feedbook.yml file for feeds and configuration and listen for changes in RSS/Atom feeds to notify about updates on social media sites'
+  c.action do |_, options, _|
+    Feedbook::Listener.start(options[:config], options[:plugins])
+  end
+
+  c.desc 'Parses feedbook.yml file for feeds and configuration and listen for changes in RSS/Atom feeds to notify about updates on social media sites'
+  c.command :offline do |cc|
+
+    cc.action do |_, options, _|
+      Feedbook::Listener.start_offline(options[:config], options[:archive], options[:plugins])
+    end
   end
 end
 
 desc 'Creates basic feedbook config file'
 command :init do |c|
-  c.action do |global_options, _, _|
-    abort 'There is already a feedbook configuration file' if File.exist?(global_options[:config])
-    File.open(global_options[:config], 'w') { |f| f.write(Box::FILES['feedbook']) }
-    puts "=> Created default feedbook configuration file: #{global_options[:config]}"
+
+  c.flag [:c,:config], default_value: 'feedbook.yml', desc: 'Feedbook configuration file location'
+
+  c.action do |_, options, _|
+    abort 'There is already a feedbook configuration file' if File.exist?(options[:config])
+    File.open(options[:config], 'w') { |f| f.write(Box::FILES['feedbook']) }
+    puts "=> Created default feedbook configuration file: #{options[:config]}"
   end
 end
 
