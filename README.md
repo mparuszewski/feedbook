@@ -1,4 +1,4 @@
-# Feedbook [![Build Status](https://travis-ci.org/pinoss/feedbook.svg?branch=master)](https://travis-ci.org/pinoss/feedbook) [![Code Climate](https://codeclimate.com/github/pinoss/feedbook.png)](https://codeclimate.com/github/pinoss/feedbook) [![Coverage Status](https://coveralls.io/repos/pinoss/feedbook/badge.png)](https://coveralls.io/r/pinoss/feedbook) 
+# Feedbook [![Build Status](https://travis-ci.org/pinoss/feedbook.svg?branch=master)](https://travis-ci.org/pinoss/feedbook) [![Code Climate](https://codeclimate.com/github/pinoss/feedbook.png)](https://codeclimate.com/github/pinoss/feedbook) [![Coverage Status](https://coveralls.io/repos/pinoss/feedbook/badge.png)](https://coveralls.io/r/pinoss/feedbook) [![Gem Version](https://badge.fury.io/rb/feedbook.svg)](http://badge.fury.io/rb/feedbook) 
 
 Feedbook is a simple console application that allows to notify on IRC, mail and social media (like Twitter and Facebook) about RSS/Atom updates.
  
