@@ -37,15 +37,42 @@ After you create or modify your configuration file, you need to start listening 
 
     $ feedbook start
     Loading configuration from file feedbook.yml... completed.
-    Loading notifiers... 
-    Configuration loaded for TwitterNotifier
+    Loading plugins from ./plugins... Plugins directory could not be found in ./plugins.
+    Loading notifiers...
     Configuration loaded for FacebookNotifier
+    Configuration loaded for TwitterNotifier
     completed.
     Fetching feeds for the first use... completed.
     Listener started...
     Fetching feeds...
 
 And Feedbook now will work and listen for changes.
+
+You can specify path for the config file with -c/--config flag:
+
+    $ feedbook init -c my-feedbook-config.yml
+    $ feedbook start -c my-feedbook-config.yml
+    $ feedbook start offline -c my-feedbook-config.yml
+
+### Offline mode
+
+Now you can run feedbook with 'offline mode', which means that you can run feedbook with cron or run it manually. There is nothing more to configure, simply run feedbook with command:
+
+    $ feedbook start offline
+    Loading configuration from file feedbook.yml... completed.
+    Loading plugins from ./plugins... Plugins directory could not be found in ./plugins.
+    Loading notifiers...
+    Configuration loaded for FacebookNotifier
+    Configuration loaded for TwitterNotifier
+    completed.
+    Reading feeds from file... canceled. File does not exist.
+    Fetching feeds for the first use... completed.
+    Fetching feeds...
+    No new posts found.
+    Saving feeds to file... completed.
+
+You can specify path for the archive file (-a/--archive flag):
+    $ feedbook start offline --archive archive-feedbook.yml
 
 ## Configuration
 
@@ -66,8 +93,8 @@ configuration:
   facebook: # Facebook OAuth token
     token: SECRET_FACEBOOK_TOKEN
   twitter:  # Twitter token collection
-    consumer_key: SECRET_CONSUMER_KEY
-    consumer_secret: SECRET_TWITTER_CONSUMER_SECRET
+    api_key: SECRET_API_KEY
+    api_secret: SECRET_API_CONSUMER_SECRET
     access_token: SECRET_TWITTER_ACCESS_TOKEN
     access_token_secret: SECRET_TWITTER_ACCESS_TOKEN_SECRET
   irc:      # IRC configuration 
@@ -107,16 +134,59 @@ IRC configuration is also very simple, I think it does not require any explanati
 
 Feedbook uses Liquid for generating output. If you know Mustache it will not be a problem for you to write your template, it uses same syntax, but provides more features (like tags and helpers) - you can read about Liquid on [Liquid for Designers](https://github.com/Shopify/liquid/wiki/Liquid-for-Designers).
 
+## Plugins
+
+Feedbook can use your custom plugins. You do not have to fork feedbook project and change source code if you want notify about RSS/Atom updates to custom Notifiers.
+Currently you can have ability to use your own Notifiers and Liquid tags/filters.
+
+By default plugins are being loaded from /plugins directory, you can set you own directory with -p/--plugins flag:
+
+    $ feedbook start --plugins ./my_custom_plugins
+
+### Notifiers
+
+If you want to write your own Notifier you need to provide 2 methods: notify and load_configuration. Your Notifier should also include Singleton module.
+In load_configuration method, given parameter opts gets hash with configuration from configuration file (under configuration node, you need to write name for your plugin as a node name and provide configuration under that node). Your Notifier class (in CamelCase) name should match name given in your configuration file (snake_case), ie. if you created MyCustomNotifier, notifier in configuration should be my_custom. 
+
+```ruby
+require 'singleton'
+
+module Feedbook
+  module Notifiers
+    class YoutCustomNotifier
+      include Singleton
+
+      # Sends notification to Nil
+      # @param message [String] message to be displayed in console
+      #
+      # @return [NilClass] nil
+      def notify(message)
+        puts "New message has been notified: #{message}"
+      end
+
+      # Load configuration for NullNotifier
+      # @param configuration = {} [Hash] Configuration hash
+      #
+      # @return [NilClass] nil
+      def load_configuration(opts = {})
+        puts 'Configuration loaded for YourCustomNotifier'
+      end
+    end
+  end
+end
+```
+
+### Liquid extensions
+
+You can also write custom Liquid extensions for your templates. You can even use extensions written for Jekyll. You can read more about extending Liquid on [Liquid for Programmers](https://github.com/Shopify/liquid/wiki/Liquid-for-Programmers) page.
+
 ## Todo
 
 Because Feedbook is still in development there is many to do:
 
 * add Google+ Notifier
   * Unfortunately Google+ does not provides API with ability to push messages to streams. Because of that I need to find a tool that will provide that feature without use of Google+.
-* add more tests
-  * I would like to add integration tests to make sure that all features work.
-* add offline mode
-  * I would like to add ability to run Feedbook with cron (start Feedbook, look for changes, save list of already notified posts and turn off)
+  * UPDATE: It is possible (with some limitations) through Google+ API (see [moments/insert](https://developers.google.com/+/api/latest/moments/insert)), but unfortunately there are no gems that support that feature.
 
 ## Contributing
 

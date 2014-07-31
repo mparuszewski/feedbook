@@ -13,8 +13,8 @@ program_desc 'Feedbook is a simple gem and application that notifies about new p
 desc 'Parses feedbook.yml file for feeds and configuration and listen for changes in RSS/Atom feeds to notify about updates on social media sites'
 command :start do |c|
 
-  c.flag [:c, :config],  default_value: 'feedbook.yml',           desc: 'Feedbook configuration file location'
-  c.flag [:p, :plugins], default_value: './plugins',              desc: 'Plugins directory'
+  c.flag [:c, :config],  default_value: 'feedbook.yml',          desc: 'Feedbook configuration file location'
+  c.flag [:p, :plugins], default_value: './plugins',             desc: 'Plugins directory'
   c.flag [:a, :archive], default_value: 'feedbook_offline.yml',  desc: 'Feedbook archive file'
 
   c.default_desc 'Parses feedbook.yml file for feeds and configuration and listen for changes in RSS/Atom feeds to notify about updates on social media sites'

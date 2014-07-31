@@ -1,4 +1,5 @@
 require 'feedbook/notifiers'
+require 'feedbook/core_ext/string'
 require 'feedbook/errors/unsupported_notifier_error'
 
 module Feedbook
@@ -22,10 +23,12 @@ module Feedbook
         when :mail, 'mail'
           Notifiers::MailNotifier.instance
         else
-          if Notifiers.const_defined?("#{type.capitalize}Notifier")
-            Notifiers.const_get("#{type.capitalize}Notifier").instance
+          if Notifiers.const_defined?("#{type.camelize}Notifier")
+            Notifiers.const_get("#{type.camelize}Notifier").instance
           elsif Notifiers.const_defined?("#{type.upcase}Notifier")
             Notifiers.const_get("#{type.upcase}Notifier").instance
+          elsif Notifiers.const_defined?("#{type.capitalize}Notifier")
+            Notifiers.const_get("#{type.capitalize}Notifier").instance
           else
             puts "notifier #{type} is not supported by Feedbook."
           end

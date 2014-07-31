@@ -32,6 +32,17 @@ describe Feedbook::Factories::NotifiersFactory do
     context 'Notifier is not defined in Factory' do
       context 'and Notifier exists as TestNotifier' do
         before :each do
+          expect(Feedbook::Notifiers).to receive(:const_defined?).with('SuperTestNotifier').and_return(true)
+          expect(Feedbook::Notifiers).to receive(:const_get).with('SuperTestNotifier').and_return(Feedbook::Notifiers::NullNotifier)
+        end
+
+        it 'returns instance of given Notifier' do
+          expect(Feedbook::Factories::NotifiersFactory.create('super_test')).to  be(Feedbook::Notifiers::NullNotifier.instance)
+        end
+      end
+
+      context 'and Notifier exists as TestNotifier' do
+        before :each do
           expect(Feedbook::Notifiers).to receive(:const_defined?).with('TestNotifier').and_return(true)
           expect(Feedbook::Notifiers).to receive(:const_get).with('TestNotifier').and_return(Feedbook::Notifiers::NullNotifier)
         end
@@ -55,7 +66,7 @@ describe Feedbook::Factories::NotifiersFactory do
 
       context 'and Notifier does not exist' do
         before :each do
-          expect(Feedbook::Notifiers).to receive(:const_defined?).with('TestNotifier').and_return(false)
+          expect(Feedbook::Notifiers).to receive(:const_defined?).with('TestNotifier').and_return(false).twice
           expect(Feedbook::Notifiers).to receive(:const_defined?).with('TESTNotifier').and_return(false)
         end
 
