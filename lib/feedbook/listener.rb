@@ -193,6 +193,5 @@ module Feedbook
     rescue Errno::ENOENT => e
       raise Errors::NoConfigurationFileError.new(e)
     end
-
   end
 end

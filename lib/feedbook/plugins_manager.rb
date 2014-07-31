@@ -13,7 +13,7 @@ module Feedbook
         end
         puts 'completed.'
       else
-        print "Plugins directory could not be found in #{path}."
+        puts "Plugins directory could not be found in #{path}."
       end
     end
   end

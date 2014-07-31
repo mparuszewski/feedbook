@@ -30,8 +30,8 @@ module Feedbook
       # @raise [Feedbook::Errors::NotifierConfigurationError] if notifier configuration fails
       def load_configuration(configuration = {})
         @client = Twitter::REST::Client.new do |config|
-          config.consumer_key        = configuration.fetch('consumer_key')
-          config.consumer_secret     = configuration.fetch('consumer_secret')
+          config.consumer_key        = configuration.fetch('api_key')
+          config.consumer_secret     = configuration.fetch('api_secret')
           config.access_token        = configuration.fetch('access_token')
           config.access_token_secret = configuration.fetch('access_token_secret')
         end
