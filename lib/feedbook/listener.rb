@@ -27,7 +27,7 @@ module Feedbook
 
         puts 'Listener started...'
         every configuration.interval do
-          
+
           puts 'Fetching feeds...'
           observed_feeds.each do |feed|
             observe_and_notify(feed)
@@ -104,6 +104,7 @@ module Feedbook
       new_posts = feed[:feed].fetch
 
       difference = Comparers::PostsComparer.get_new_posts(feed[:posts], new_posts)
+      updated_posts = Comparers::PostsComparer.get_updated_posts(feed[:posts], new_posts)
 
       if difference.empty?
         puts 'No new posts found.'
@@ -115,6 +116,12 @@ module Feedbook
       difference.each do |post|
         feed[:feed].notifications.each do |notification|
           notification.notify(post)
+        end
+      end
+
+      updated_posts.each do |post|
+        feed[:feed].notifications.each do |notification|
+          notification.update_notification(post)
         end
       end
 

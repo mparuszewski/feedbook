@@ -20,9 +20,10 @@ module Feedbook
       @variables     = opts.fetch(:variables, {})
       @notifications = opts.fetch(:notifications, []).map do |notification|
         Notification.new(
-          type:      notification['type'],
-          template:  notification['template'],
-          variables: variables
+          type:            notification['type'],
+          template:        notification['template'],
+          update_template: notification['update_template'],
+          variables:       variables
         )
       end
     end

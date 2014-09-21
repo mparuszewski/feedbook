@@ -6,27 +6,41 @@ require 'feedbook/errors/invalid_variables_format_error'
 
 module Feedbook
   class Notification
-    attr_reader :type, :template, :variables
+    attr_reader :type, :template, :update_template, :variables
 
     # Initializes Notification instance
-    # @param opts = {} [Hash] Hash with 
+    # @param opts = {} [Hash] Hash with
     #
     # @return [type] [description]
     def initialize(opts = {})
-      @type      = opts.fetch(:type, '')
-      @variables = opts.fetch(:variables, {})
-      @template  = parse_template(opts.fetch(:template, ''))
+      @type             = opts.fetch(:type, '')
+      @variables        = opts.fetch(:variables, {})
+      @template         = parse_template(opts.fetch(:template, ''))
+      @update_template  = parse_template(opts.fetch(:update_template, ''))
     end
 
     # Notifies selected gateway about new post
-    # @param object [Object] objct that respond to :to_hash method
+    # @param object [Object] object that respond to :to_hash method
     #
-    # @return [NilClass] nil
+    # @return [Object] returns object from input
     def notify(object)
       message = template.render(object.to_hash.merge(variables))
 
       message_id = notifier.notify(message)
       object.message_id = message_id
+
+      object
+    end
+
+    # Updates selected gateway with new post
+    # @param object [Object] object that respond to :to_hash method
+    #
+    # @return [Object] returns object from input
+    def update_notification(object)
+      message = update_template.render(object.to_hash.merge(variables))
+
+      message_id = object.message_id
+      notifier.update_post(message_id, message) if object.respond_to? :update_post
 
       object
     end

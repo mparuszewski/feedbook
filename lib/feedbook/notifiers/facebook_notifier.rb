@@ -9,7 +9,7 @@ module Feedbook
 
       # Sends notification to Facebook wall
       # @param message [String] message to be send to Facebook wall
-      # 
+      #
       # @return [NilClass] nil
       # @raise [Feedbook::Errors::NotifierNotifyError] if notify method fails 
       def notify(message)
