@@ -96,16 +96,15 @@ module Feedbook
       puts 'completed.'
     end
 
-
     # Single run of loop for listening for changes in RSS feeds and notifies about updates
     # @param feed [Feedbook::Feed] requested feed to be observed (hash with feed and posts)
-    # 
+    #
     # @return [NilClass] nil
     def self.observe_and_notify(feed)
       new_posts = feed[:feed].fetch
 
       difference = Comparers::PostsComparer.get_new_posts(feed[:posts], new_posts)
-      
+
       if difference.empty?
         puts 'No new posts found.'
       else

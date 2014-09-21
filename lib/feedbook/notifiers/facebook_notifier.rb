@@ -16,11 +16,19 @@ module Feedbook
         if client.nil?
           puts "Message has not been notified on Facebook: #{message} because of invalid client configuration"
         else
-          client.put_wall_post(message)
+          process_response(client.put_wall_post(message))
           puts "New message has been notified on Facebook: #{message}"
         end
       rescue Koala::KoalaError => e
-        p "FacebookNotifier did not notify because of client error (#{e.message})."
+        puts "FacebookNotifier did not notify because of client error (#{e.message})."
+      end
+
+      # Gets id of post after Facebook notify
+      # @param provider_response after Facebook notification
+      #
+      # @return [String] id of message that could be used for edit post in the future
+      def process_response(provider_response)
+        nil
       end
 
       # Load configuration for FacebookNotifier
